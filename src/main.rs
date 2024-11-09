@@ -2,7 +2,7 @@ use std::io::stdin;
 
 fn main() {
     let mut memory = Memory {
-        slots: vec![0.0; 10],
+        slots: vec![],
     };
     let mut prev_result: f64 = 0.0;
     for line in stdin().lines() {
@@ -33,15 +33,27 @@ fn main() {
 }
 
 fn add_and_print_memory(memory: &mut Memory, token: &str, prev_result: f64) {
-    let slot_index: usize = token[3..token.len() - 1].parse().unwrap();
-    memory.slots[slot_index] += prev_result;
-    print_output(memory.slots[slot_index]);
+    let slot_name = &token[3..token.len() - 1];
+    for slot in memory.slots.iter_mut() {
+        if slot.0 == slot_name {
+            slot.1 += prev_result;
+            print_output(slot.1);
+            return;
+        }
+    }
+    memory.slots.push((slot_name.to_string(), prev_result));
+    print_output(prev_result);
 }
 
 fn eval_token(token: &str, memory: &Memory) -> f64 {
     if token.starts_with("mem") {
-        let slot_index: usize = token[3..].parse().unwrap();
-        memory.slots[slot_index]
+        let slot_name = &token[3..];
+        for slot in &memory.slots {
+            if slot.0 == slot_name {
+                return slot.1;
+            }
+        }
+        0.0
     } else {
         token.parse().unwrap()
     }
@@ -64,5 +76,6 @@ fn print_output(value: f64) {
 }
 
 struct Memory {
-    slots: Vec<f64>,
+    // メモリの名前と値の組を配列で保存する
+    slots: Vec<(String, f64)>,
 }
