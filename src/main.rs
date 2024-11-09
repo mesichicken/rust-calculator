@@ -13,12 +13,10 @@ fn main() {
         let tokens: Vec<&str> = line.split(char::is_whitespace).collect();
 
         if tokens[0] == "mem+" {
-            memory += prev_result;
-            print_output(memory);
+            add_and_print_memory(&mut memory, prev_result);
             continue;
         } else if tokens[0] == "mem-" {
-            memory -= prev_result;
-            print_output(memory);
+            add_and_print_memory(&mut memory, -prev_result);
             continue;
         }
 
@@ -31,6 +29,11 @@ fn main() {
         print_output(result);
         prev_result = result;
     }
+}
+
+fn add_and_print_memory(memory: &mut f64, prev_result: f64) {
+    *memory += prev_result;
+    print_output(*memory);
 }
 
 fn eval_token(token: &str, memory: f64) -> f64 {
